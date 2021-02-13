@@ -156,6 +156,22 @@ const messages = {
 				},
 				success: "Contacto guardado satisfactoriamente.",
 			},
+			queueModal: {
+				title: {
+					add: "Agregar cola",
+					edit: "Editar cola",
+				},
+				form: {
+					name: "Nombre",
+					color: "Color",
+					greetingMessage: "Mensaje de saludo",
+				},
+				buttons: {
+					okAdd: "Añadir",
+					okEdit: "Ahorrar",
+					cancel: "Cancelar",
+				},
+			},
 			userModal: {
 				title: {
 					add: "Agregar usuario",
@@ -176,6 +192,14 @@ const messages = {
 			},
 			chat: {
 				noTicketMessage: "Selecciona un ticket para empezar a chatear.",
+			},
+			ticketsManager: {
+				buttons: {
+					newTicket: "Nuevo",
+				},
+			},
+			ticketsQueueSelect: {
+				placeholder: "Linhas",
 			},
 			tickets: {
 				toasts: {
@@ -230,6 +254,7 @@ const messages = {
 					connections: "Conexiones",
 					tickets: "Tickets",
 					contacts: "Contactos",
+					queues: "Linhas",
 					administration: "Administración",
 					users: "Usuarios",
 					settings: "Configuración",
@@ -243,6 +268,26 @@ const messages = {
 			},
 			notifications: {
 				noTickets: "Sin notificaciones.",
+			},
+			queues: {
+				title: "Linhas",
+				table: {
+					name: "Nombre",
+					color: "Color",
+					greeting: "Mensaje de saludo",
+					actions: "Comportamiento",
+				},
+				buttons: {
+					add: "Agregar cola",
+				},
+				confirmationModal: {
+					deleteTitle: "Eliminar",
+					deleteMessage:
+						"¿Estás seguro? ¡Esta acción no se puede revertir! Los tickets en esa cola seguirán existiendo, pero ya no tendrán ninguna cola asignada.",
+				},
+			},
+			queueSelect: {
+				inputLabel: "Linhas",
 			},
 			users: {
 				title: "Usuarios",
@@ -292,6 +337,7 @@ const messages = {
 				placeholderOpen: "Escribe un mensaje",
 				placeholderClosed:
 					"Vuelva a abrir o acepte este ticket para enviar un mensaje.",
+				signMessage: "Firmar",
 			},
 			contactDrawer: {
 				header: "Detalles del contacto",
@@ -329,6 +375,8 @@ const messages = {
 				},
 			},
 			backendErrors: {
+				ERR_NO_OTHER_WHATSAPP:
+					"Debe haber al menos una conexión de WhatsApp predeterminada.",
 				ERR_NO_DEF_WAPP_FOUND:
 					"No se encontró WhatsApp predeterminado. Verifique la página de conexiones.",
 				ERR_WAPP_NOT_INITIALIZED:
@@ -358,6 +406,10 @@ const messages = {
 				ERR_CREATING_TICKET: "Error al crear el ticket en la base de datos.",
 				ERR_FETCH_WAPP_MSG:
 					"Error al obtener el mensaje en WhtasApp, tal vez sea demasiado antiguo.",
+				ERR_QUEUE_COLOR_ALREADY_EXISTS:
+					"Este color ya está en uso, elija otro.",
+				ERR_WAPP_GREETING_REQUIRED:
+					"El mensaje de saludo es obligatorio cuando hay más de una cola.",
 			},
 		},
 	},

@@ -153,6 +153,22 @@ const messages = {
 				},
 				success: "Contact saved successfully.",
 			},
+			queueModal: {
+				title: {
+					add: "Add queue",
+					edit: "Edit queue",
+				},
+				form: {
+					name: "Name",
+					color: "Color",
+					greetingMessage: "Greeting Message",
+				},
+				buttons: {
+					okAdd: "Add",
+					okEdit: "Save",
+					cancel: "Cancel",
+				},
+			},
 			userModal: {
 				title: {
 					add: "Add user",
@@ -173,6 +189,14 @@ const messages = {
 			},
 			chat: {
 				noTicketMessage: "Select a ticket to start chatting.",
+			},
+			ticketsManager: {
+				buttons: {
+					newTicket: "New",
+				},
+			},
+			ticketsQueueSelect: {
+				placeholder: "Queues",
 			},
 			tickets: {
 				toasts: {
@@ -226,6 +250,7 @@ const messages = {
 					connections: "Connections",
 					tickets: "Tickets",
 					contacts: "Contacts",
+					queues: "Queues",
 					administration: "Administration",
 					users: "Users",
 					settings: "Settings",
@@ -239,6 +264,26 @@ const messages = {
 			},
 			notifications: {
 				noTickets: "No notifications.",
+			},
+			queues: {
+				title: "Queues",
+				table: {
+					name: "Name",
+					color: "Color",
+					greeting: "Greeting message",
+					actions: "Actions",
+				},
+				buttons: {
+					add: "Add queue",
+				},
+				confirmationModal: {
+					deleteTitle: "Delete",
+					deleteMessage:
+						"Are you sure? It cannot be reverted! Tickets in this queue will still exist, but will not have any queues assigned.",
+				},
+			},
+			queueSelect: {
+				inputLabel: "Queues",
 			},
 			users: {
 				title: "Users",
@@ -287,6 +332,7 @@ const messages = {
 			messagesInput: {
 				placeholderOpen: "Type a message",
 				placeholderClosed: "Reopen or accept this ticket to send a message.",
+				signMessage: "Sign",
 			},
 			contactDrawer: {
 				header: "Contact details",
@@ -323,6 +369,8 @@ const messages = {
 				},
 			},
 			backendErrors: {
+				ERR_NO_OTHER_WHATSAPP:
+					"There must be at lest one default WhatsApp connection.",
 				ERR_NO_DEF_WAPP_FOUND:
 					"No default WhatsApp found. Check connections page.",
 				ERR_WAPP_NOT_INITIALIZED:
@@ -352,6 +400,10 @@ const messages = {
 				ERR_CREATING_TICKET: "Error while creating ticket on database.",
 				ERR_FETCH_WAPP_MSG:
 					"Error fetching the message in WhtasApp, maybe it is too old.",
+				ERR_QUEUE_COLOR_ALREADY_EXISTS:
+					"This color is already in use, pick another one.",
+				ERR_WAPP_GREETING_REQUIRED:
+					"Greeting message is required if there is more than one queue.",
 			},
 		},
 	},

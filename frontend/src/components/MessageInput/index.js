@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import "emoji-mart/css/emoji-mart.css";
 import { useParams } from "react-router-dom";
 import { Picker } from "emoji-mart";
-import { toast } from "react-toastify";
 import MicRecorder from "mic-recorder-to-mp3";
 import clsx from "clsx";
 
@@ -20,11 +19,15 @@ import ClearIcon from "@material-ui/icons/Clear";
 import MicIcon from "@material-ui/icons/Mic";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import { FormControlLabel, Switch } from "@material-ui/core";
 
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import RecordingTimer from "./RecordingTimer";
 import { ReplyMessageContext } from "../../context/ReplyingMessage/ReplyingMessageContext";
+import { AuthContext } from "../../context/Auth/AuthContext";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import toastError from "../../errors/toastError";
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
@@ -163,7 +166,6 @@ const useStyles = makeStyles(theme => ({
 const MessageInput = ({ ticketStatus }) => {
 	const classes = useStyles();
 	const { ticketId } = useParams();
-	const username = localStorage.getItem("username");
 
 	const [medias, setMedias] = useState([]);
 	const [inputMessage, setInputMessage] = useState("");
@@ -174,6 +176,9 @@ const MessageInput = ({ ticketStatus }) => {
 	const { setReplyingMessage, replyingMessage } = useContext(
 		ReplyMessageContext
 	);
+	const { user } = useContext(AuthContext);
+
+	const [signMessage, setSignMessage] = useLocalStorage("signOption", true);
 
 	useEffect(() => {
 		inputRef.current.focus();
@@ -227,16 +232,7 @@ const MessageInput = ({ ticketStatus }) => {
 		try {
 			await api.post(`/messages/${ticketId}`, formData);
 		} catch (err) {
-			const errorMsg = err.response?.data?.error;
-			if (errorMsg) {
-				if (i18n.exists(`backendErrors.${errorMsg}`)) {
-					toast.error(i18n.t(`backendErrors.${errorMsg}`));
-				} else {
-					toast.error(err.response.data.error);
-				}
-			} else {
-				toast.error("Unknown error");
-			}
+			toastError(err);
 		}
 
 		setLoading(false);
@@ -251,22 +247,15 @@ const MessageInput = ({ ticketStatus }) => {
 			read: 1,
 			fromMe: true,
 			mediaUrl: "",
-			body: `${username}: ${inputMessage.trim()}`,
+			body: signMessage
+				? `*${user?.name}:*\n${inputMessage.trim()}`
+				: inputMessage.trim(),
 			quotedMsg: replyingMessage,
 		};
 		try {
 			await api.post(`/messages/${ticketId}`, message);
 		} catch (err) {
-			const errorMsg = err.response?.data?.error;
-			if (errorMsg) {
-				if (i18n.exists(`backendErrors.${errorMsg}`)) {
-					toast.error(i18n.t(`backendErrors.${errorMsg}`));
-				} else {
-					toast.error(err.response.data.error);
-				}
-			} else {
-				toast.error("Unknown error");
-			}
+			toastError(err);
 		}
 
 		setInputMessage("");
@@ -283,7 +272,7 @@ const MessageInput = ({ ticketStatus }) => {
 			setRecording(true);
 			setLoading(false);
 		} catch (err) {
-			console.log(err);
+			toastError(err);
 			setLoading(false);
 		}
 	};
@@ -306,16 +295,7 @@ const MessageInput = ({ ticketStatus }) => {
 
 			await api.post(`/messages/${ticketId}`, formData);
 		} catch (err) {
-			const errorMsg = err.response?.data?.error;
-			if (errorMsg) {
-				if (i18n.exists(`backendErrors.${errorMsg}`)) {
-					toast.error(i18n.t(`backendErrors.${errorMsg}`));
-				} else {
-					toast.error(err.response.data.error);
-				}
-			} else {
-				toast.error("Unknown error");
-			}
+			toastError(err);
 		}
 
 		setRecording(false);
@@ -327,7 +307,7 @@ const MessageInput = ({ ticketStatus }) => {
 			await Mp3Recorder.stop().getMp3();
 			setRecording(false);
 		} catch (err) {
-			console.log(err);
+			toastError(err);
 		}
 	};
 
@@ -433,6 +413,22 @@ const MessageInput = ({ ticketStatus }) => {
 							<AttachFileIcon className={classes.sendMessageIcons} />
 						</IconButton>
 					</label>
+					<FormControlLabel
+						style={{ marginRight: 7, color: "gray" }}
+						label={i18n.t("messagesInput.signMessage")}
+						labelPlacement="start"
+						control={
+							<Switch
+								size="small"
+								checked={signMessage}
+								onChange={e => {
+									setSignMessage(e.target.checked);
+								}}
+								name="showAllTickets"
+								color="primary"
+							/>
+						}
+					/>
 					<div className={classes.messageInputWrapper}>
 						<InputBase
 							inputRef={input => {

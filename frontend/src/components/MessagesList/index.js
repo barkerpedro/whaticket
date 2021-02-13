@@ -21,14 +21,13 @@ import {
 	GetApp,
 } from "@material-ui/icons";
 
-import LinkifyWithTargetBlank from "../LinkifyWithTargetBlank";
+import MarkdownWrapper from "../MarkdownWrapper";
 import ModalImageCors from "../ModalImageCors";
 import MessageOptionsMenu from "../MessageOptionsMenu";
 import whatsBackground from "../../assets/wa-background.png";
 
-import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
-import { toast } from "react-toastify";
+import toastError from "../../errors/toastError";
 
 const useStyles = makeStyles(theme => ({
 	messagesListWrapper: {
@@ -302,7 +301,7 @@ const reducer = (state, action) => {
 	}
 };
 
-const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
+const MessagesList = ({ ticketId, isGroup }) => {
 	const classes = useStyles();
 
 	const [messagesList, dispatch] = useReducer(reducer, []);
@@ -343,16 +342,7 @@ const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
 					}
 				} catch (err) {
 					setLoading(false);
-					const errorMsg = err.response?.data?.error;
-					if (errorMsg) {
-						if (i18n.exists(`backendErrors.${errorMsg}`)) {
-							toast.error(i18n.t(`backendErrors.${errorMsg}`));
-						} else {
-							toast.error(err.response.data.error);
-						}
-					} else {
-						toast.error("Unknown error");
-					}
+					toastError(err);
 				}
 			};
 			fetchMessages();
@@ -364,7 +354,8 @@ const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
 
 	useEffect(() => {
 		const socket = openSocket(process.env.REACT_APP_BACKEND_URL);
-		socket.emit("joinChatBox", ticketId);
+
+		socket.on("connect", () => socket.emit("joinChatBox", ticketId));
 
 		socket.on("appMessage", data => {
 			if (data.action === "create") {
@@ -556,7 +547,7 @@ const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
 			const viewMessagesList = messagesList.map((message, index) => {
 				if (!message.fromMe) {
 					return (
-						<LinkifyWithTargetBlank key={message.id}>
+						<React.Fragment key={message.id}>
 							{renderDailyTimestamps(message, index)}
 							{renderMessageDivider(message, index)}
 							<div className={classes.messageLeft}>
@@ -578,17 +569,17 @@ const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
 								{message.mediaUrl && checkMessageMedia(message)}
 								<div className={classes.textContentItem}>
 									{message.quotedMsg && renderQuotedMessage(message)}
-									{message.body}
+									<MarkdownWrapper>{message.body}</MarkdownWrapper>
 									<span className={classes.timestamp}>
 										{format(parseISO(message.createdAt), "HH:mm")}
 									</span>
 								</div>
 							</div>
-						</LinkifyWithTargetBlank>
+						</React.Fragment>
 					);
 				} else {
 					return (
-						<LinkifyWithTargetBlank key={message.id}>
+						<React.Fragment key={message.id}>
 							{renderDailyTimestamps(message, index)}
 							{renderMessageDivider(message, index)}
 							<div className={classes.messageRight}>
@@ -616,14 +607,14 @@ const MessagesList = ({ ticketId, isGroup, setReplyingMessage }) => {
 										/>
 									)}
 									{message.quotedMsg && renderQuotedMessage(message)}
-									{message.body}
+									<MarkdownWrapper>{message.body}</MarkdownWrapper>
 									<span className={classes.timestamp}>
 										{format(parseISO(message.createdAt), "HH:mm")}
 										{renderMessageAck(message)}
 									</span>
 								</div>
 							</div>
-						</LinkifyWithTargetBlank>
+						</React.Fragment>
 					);
 				}
 			});
